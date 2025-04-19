@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PracticaDataStore</string>
+    <string name="preferences_file_key">default-pref</string>
+</resources>
