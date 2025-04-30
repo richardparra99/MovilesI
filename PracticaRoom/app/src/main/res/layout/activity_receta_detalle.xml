@@ -39,22 +39,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-            tools:ignore="MissingConstraints">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:inputType="textMultiLine" />
-        </com.google.android.material.textfield.TextInputLayout>
+            tools:ignore="MissingConstraints" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtPreparacion"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Preparacion"
+            app:layout_constraintBottom_toTopOf="@+id/btnEliminar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtIngredientes">
+            app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -92,21 +86,51 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/checkBoxContainer"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/txtPreparacion"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtPreparacion"/>
+            app:layout_constraintTop_toBottomOf="@+id/txtIngredientes">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"/>
+            <CheckBox
+                android:id="@+id/checkArroz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Arroz" />
+
+            <CheckBox
+                android:id="@+id/checkHuevo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Huevo" />
+
+            <CheckBox
+                android:id="@+id/checkPollo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pollo" />
+
+            <CheckBox
+                android:id="@+id/checkAjo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ajo" />
+
+            <CheckBox
+                android:id="@+id/checkLechuga"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lechuga" />
+
+            <CheckBox
+                android:id="@+id/checkTomate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tomate" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

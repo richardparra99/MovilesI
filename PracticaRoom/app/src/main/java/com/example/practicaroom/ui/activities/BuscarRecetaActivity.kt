@@ -1,6 +1,7 @@
 package com.example.practicaroom.ui.activities
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -28,6 +29,7 @@ class BuscarRecetaActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         setupBotonesIngredientes()
         setupBotonBuscar()
     }
@@ -41,11 +43,19 @@ class BuscarRecetaActivity : AppCompatActivity() {
 
             viewModel.buscarRecetasConIngredientes(this, ingredientesSeleccionados).observe(this) { recetas ->
                 if (recetas.isNullOrEmpty()) {
-                    Toast.makeText(this, "No se encontraron recetas", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "No se encontraron recetas. Puedes crear una nueva.", Toast.LENGTH_SHORT).show()
+
+                    // 👉 Enviar los ingredientes seleccionados para prellenar el campo de ingredientes
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putStringArrayListExtra("ingredientes_seleccionados", ArrayList(ingredientesSeleccionados))
+                    startActivity(intent)
+
+                    finish() // Cerramos esta Activity después de mandar al formulario
                 } else {
-                    // Aquí puedes mostrar la lista de recetas encontradas
-                    // Por ejemplo, abrir un RecyclerView o ir a otro Activity
-                    Toast.makeText(this, "Recetas encontradas: ${recetas.size}", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ListaRecetaFiltradasActivity::class.java)
+                    intent.putExtra("recetas_encontradas", ArrayList(recetas)) // Recetas encontradas
+                    startActivity(intent)
+                    finish()
                 }
             }
         }

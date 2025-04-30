@@ -10,9 +10,10 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.practicaroom.R
 import com.example.practicaroom.databinding.ActivityDetalleListaRecetaBinding
 import com.example.practicaroom.db.models.Receta
+import com.example.practicaroom.db.models.RecetaConIngrediente
 
 class DetalleListaRecetaActivity : AppCompatActivity() {
-    private var receta: Receta? = null
+    private var recetaConIngrediente: RecetaConIngrediente? = null
     private lateinit var binding: ActivityDetalleListaRecetaBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,16 +25,16 @@ class DetalleListaRecetaActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        receta = intent.getSerializableExtra(PARAM_RECETA) as? Receta
+        recetaConIngrediente = intent.getSerializableExtra(PARAM_RECETA) as? RecetaConIngrediente
         mostrarDatosReceta()
     }
     private fun mostrarDatosReceta() {
-        receta?.let {
-            binding.txtTitle.setText(it.titulo)
-            binding.txtIngredientes.setText(it.ingredientes)
-            binding.txtPreparacion.setText(it.preparacion)
+        recetaConIngrediente?.let {
+            binding.txtTitle.setText(it.receta.titulo)
+            binding.txtPreparacion.setText(it.receta.preparacion)
+            binding.txtIngredientes.setText(it.ingrediente.joinToString(", ") { i -> i.nombre })
+            }
         }
-    }
 
     companion object {
         const val PARAM_RECETA = "receta"
