@@ -2,7 +2,7 @@ package com.example.practicaroom.repositories
 
 import android.content.Context
 import com.example.practicaroom.db.AppDataBase
-import com.example.practicaroom.db.dao.RecetaDao
+import com.example.practicaroom.db.models.Ingrediente
 import com.example.practicaroom.db.models.Receta
 import com.example.practicaroom.db.models.RecetaIngrediente
 
@@ -47,24 +47,44 @@ object RecetaRepository {
             .eliminarReceta(receta)
     }
 
-    suspend fun buscarRecetasPorIngredientes(context: Context, ingredientes: List<String>): List<Receta> {
+    suspend fun buscarRecetasPorIngredientes(context: Context, ingredientesSeleccionados: List<String>): List<Receta> {
         val db = AppDataBase.getInstance(context)
 
-        // Preparamos hasta 8 ingredientes, si hay menos rellenamos con ""
-        val listaIngredientes = ingredientes.toMutableList()
-        while (listaIngredientes.size < 8) {
-            listaIngredientes.add("")
-        }
+        val recetasRelacionadas = db.recetaDao().obtenerRecetasConIngredientes()
 
-        return db.recetaDao().buscarRecetasPorIngredientes(
-            listaIngredientes[0],
-            listaIngredientes[1],
-            listaIngredientes[2],
-            listaIngredientes[3],
-            listaIngredientes[4],
-            listaIngredientes[5],
-            listaIngredientes[6],
-            listaIngredientes[7]
-        )
+        return recetasRelacionadas.filter { recetaConIngrediente ->
+            // Verifica si al menos un ingrediente de la receta coincide con los seleccionados
+            ingredientesSeleccionados.any { seleccionado ->
+                recetaConIngrediente.ingrediente.any { it.nombre.equals(seleccionado, ignoreCase = true) }
+            }
+        }.map { it.receta }
+    }
+
+    suspend fun guardarRecetaConIngredientes(context: Context, receta: Receta, nombresIngredientes: List<String>) {
+        val db = AppDataBase.getInstance(context)
+
+        // Guardar receta y obtener ID generado
+        val recetaId = db.recetaDao().insertarReceta(receta).toInt()
+
+        for (nombreOriginal in nombresIngredientes) {
+            val nombre = nombreOriginal.trim().lowercase()
+
+            // Verificamos si el ingrediente ya existe
+            var ingrediente = db.recetaDao().obtenerIngredientePorNombre(nombre)
+
+            // Si no existe, lo insertamos
+            if (ingrediente == null) {
+                val nuevoIngredienteId = db.recetaDao().insertarIngrediente(
+                    Ingrediente(nombre)
+                ).toInt()
+
+                ingrediente = Ingrediente(nombre).apply { id = nuevoIngredienteId }
+            }
+
+            // Insertamos la relación receta <-> ingrediente
+            db.recetaDao().insertarRecetaIngrediente(
+                RecetaIngrediente(recetaId, ingrediente.id)
+            )
+        }
     }
 }

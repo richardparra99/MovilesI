@@ -12,26 +12,15 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import com.example.practicaroom.R
 import com.example.practicaroom.databinding.ActivityMainBinding
 import com.example.practicaroom.db.models.Receta
 import com.example.practicaroom.ui.viewmodels.MainViewModel
 
-
 class MainActivity : AppCompatActivity() {
     private val viewmodel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
-    private lateinit var recetaAdapter: RecetaAdapter
 
-    private val buscarRecetaLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val recetas = result.data?.getSerializableExtra("recetas_encontradas") as? ArrayList<Receta>
-            recetas?.let {
-                recetaAdapter.setData(it)
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +79,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, RecetaDetalleActivity::class.java)
             startActivity(intent)
         }
+
     }
     /*companion object {
         private const val PARAM_RECETA_GUARDADO = "receta_guardada"
@@ -101,4 +91,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }*/
+
 }

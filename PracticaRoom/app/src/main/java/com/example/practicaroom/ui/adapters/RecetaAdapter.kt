@@ -43,7 +43,6 @@ class RecetaAdapter(
         RecyclerView.ViewHolder(binding.root){
         fun bind(item: Receta, listener: PersonClickListener?) {
             binding.lblRectaTitulo.text = item.titulo
-            binding.lblIngredientes.text = item.ingredientes
             binding.lblPreparacion.text = item.preparacion
             binding.root.setOnClickListener{
                 listener?.onRecetaClick(item)

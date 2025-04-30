@@ -3,6 +3,8 @@ package com.example.practicaroom.ui.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.CheckBox
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +23,10 @@ class RecetaDetalleActivity : AppCompatActivity() {
     private var receta: Receta? = null
     private lateinit var binding: ActivityRecetaDetalleBinding
     private val viewModel: RecetaDetalleViewModel by viewModels()
+
+    private val listaIngredientesDisponibles = listOf("Arroz", "Huevo", "Pollo", "Ajo", "Lechuga", "Tomate", "Queso", "Fideo Largo")
+    private val checkBoxes = mutableListOf<CheckBox>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,8 +38,41 @@ class RecetaDetalleActivity : AppCompatActivity() {
             insets
         }
         receta = intent.getSerializableExtra(PARAM_RECETA) as Receta?
+        val ingredientesIniciales = intent.getStringArrayListExtra("ingredientes_seleccionados")
+        ingredientesIniciales?.let {
+            viewModel.setIngredientesIniciales(it)
+        }
         cargarRecetaDetalle(receta)
+        recuperIngredienteSelecionado()
         setupEventListeners()
+        setupCheckBoxes()
+    }
+
+    private fun setupCheckBoxes() {
+        val container = findViewById<LinearLayout>(R.id.checkBoxContainer)
+        container.removeAllViews()
+        checkBoxes.clear()
+
+        for (ingrediente in listaIngredientesDisponibles) {
+            val checkBox = CheckBox(this).apply {
+                text = ingrediente
+                isChecked = viewModel.ingredientesSeleccionados.value?.contains(ingrediente) == true
+
+                setOnCheckedChangeListener { _, isChecked ->
+                    viewModel.toggleIngrediente(ingrediente)
+                }
+            }
+            checkBoxes.add(checkBox)
+            container.addView(checkBox)
+        }
+
+    }
+
+    private fun recuperIngredienteSelecionado() {
+        val ingredientesRecibidos = intent.getStringArrayListExtra("ingredientes_seleccionados")
+        ingredientesRecibidos?.let {
+            binding.txtIngredientes.editText?.setText(it.joinToString(","))
+        }
     }
 
 
@@ -58,12 +97,21 @@ class RecetaDetalleActivity : AppCompatActivity() {
     private fun guardarReceta() {
         val nuevaReceta = Receta(
             binding.txtTitle.editText?.text.toString(),
-            binding.txtIngredientes.editText?.text.toString(),
             binding.txtPreparacion.editText?.text.toString()
         )
 
+        val ingredientes = viewModel.ingredientesSeleccionados.value?.toList() ?: emptyList()
+
         lifecycleScope.launch {
             RecetaRepository.guardarReceta(this@RecetaDetalleActivity, nuevaReceta)
+            finish()
+        }
+
+        lifecycleScope.launch {
+            RecetaRepository.guardarRecetaConIngredientes(this@RecetaDetalleActivity,
+                nuevaReceta,
+                ingredientes
+            )
             finish()
         }
     }
@@ -75,7 +123,6 @@ class RecetaDetalleActivity : AppCompatActivity() {
             return
         }
         binding.txtTitle.editText?.setText(receta.titulo)
-        binding.txtIngredientes.editText?.setText(receta.ingredientes)
         binding.txtPreparacion.editText?.setText(receta.preparacion)
     }
 

@@ -4,8 +4,12 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import com.example.practicaroom.db.models.Ingrediente
 import com.example.practicaroom.db.models.Receta
+import com.example.practicaroom.db.models.RecetaConIngrediente
+import com.example.practicaroom.db.models.RecetaIngrediente
 
 @Dao
 interface RecetaDao {
@@ -24,26 +28,29 @@ interface RecetaDao {
     @Delete
     suspend fun eliminarReceta(receta: Receta)
 
+    @Transaction
     @Query("""
-    SELECT * FROM Receta
-    WHERE ingredientes LIKE '%' || :ingrediente1 || '%'
-       OR ingredientes LIKE '%' || :ingrediente2 || '%'
-       OR ingredientes LIKE '%' || :ingrediente3 || '%'
-       OR ingredientes LIKE '%' || :ingrediente4 || '%'
-       OR ingredientes LIKE '%' || :ingrediente5 || '%'
-       OR ingredientes LIKE '%' || :ingrediente6 || '%'
-       OR ingredientes LIKE '%' || :ingrediente7 || '%'
-       OR ingredientes LIKE '%' || :ingrediente8 || '%'
-""")
-    suspend fun buscarRecetasPorIngredientes(
-        ingrediente1: String = "",
-        ingrediente2: String = "",
-        ingrediente3: String = "",
-        ingrediente4: String = "",
-        ingrediente5: String = "",
-        ingrediente6: String = "",
-        ingrediente7: String = "",
-        ingrediente8: String = ""
-    ): List<Receta>
+        SELECT * FROM Receta
+        INNER JOIN RecetaIngrediente ON Receta.id = RecetaIngrediente.recetaId
+        INNER JOIN Ingrediente ON Ingrediente.id = RecetaIngrediente.ingredienteId
+        WHERE Ingrediente.nombre IN (:nombres)
+        GROUP BY Receta.id
+    """)
+    suspend fun buscarRecetasPorNombresDeIngredientes(nombres: List<String>): List<RecetaConIngrediente>
+
+
+    @Insert
+    suspend fun insertarIngrediente(ingrediente: Ingrediente): Long
+
+    @Query("SELECT * FROM Ingrediente WHERE nombre = :nombre")
+    suspend fun obtenerIngredientePorNombre(nombre: String): Ingrediente?
+
+    @Insert
+    suspend fun insertarRecetaIngrediente(crossRef: RecetaIngrediente)
+
+    @Transaction
+    @Query("SELECT * FROM Receta")
+    suspend fun obtenerRecetasConIngredientes(): List<RecetaConIngrediente>
+
 
 }

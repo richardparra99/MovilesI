@@ -7,7 +7,6 @@ import java.io.Serializable
 @Entity
 data class Receta(
     var titulo: String,
-    var ingredientes: String,
     var preparacion: String
 ): Serializable {
     @PrimaryKey(autoGenerate = true)
