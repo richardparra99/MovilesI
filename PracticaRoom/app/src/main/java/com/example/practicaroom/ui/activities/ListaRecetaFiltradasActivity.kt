@@ -2,6 +2,7 @@ package com.example.practicaroom.ui.activities
 
 import RecetaAdapter
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -32,6 +33,17 @@ class ListaRecetaFiltradasActivity : AppCompatActivity() {
 
     private fun setupEventRecyclerView() {
         adapter = RecetaAdapter(recetasFiltradas)
+        adapter.persoonClickListerner = object : RecetaAdapter.PersonClickListener {
+            override fun onRecetaClick(receta: Receta) {
+
+            }
+
+            override fun onPersonDetailClick(receta: Receta) {
+                val intent = DetalleListaRecetaActivity.detailIntent(this@ListaRecetaFiltradasActivity, receta.id)
+                startActivity(intent)
+            }
+        }
+
         binding.rvRecetasFiltradas.apply {
             layoutManager = LinearLayoutManager(this@ListaRecetaFiltradasActivity)
             adapter = this@ListaRecetaFiltradasActivity.adapter
@@ -39,7 +51,22 @@ class ListaRecetaFiltradasActivity : AppCompatActivity() {
     }
 
     private fun obtenerRecetasDesdeIntent() {
-        recetasFiltradas = intent.getSerializableExtra("recetas_encontradas") as? ArrayList<Receta> ?: arrayListOf()
+        val extra = intent.getSerializableExtra("recetas_encontradas")
+        if (extra is ArrayList<*>) {
+            val listaFiltrada = extra.filterIsInstance<Receta>()
+            if (listaFiltrada.isNotEmpty()) {
+                recetasFiltradas = ArrayList(listaFiltrada)
+            } else {
+                mostrarErrorYSalir("No se pudieron recuperar las recetas.")
+            }
+        } else {
+            mostrarErrorYSalir("No se encontró información de recetas.")
+        }
+    }
+
+    private fun mostrarErrorYSalir(mensaje: String) {
+        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+        finish()
     }
 
 }

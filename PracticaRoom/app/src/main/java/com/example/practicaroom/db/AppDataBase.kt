@@ -10,7 +10,7 @@ import com.example.practicaroom.db.models.Receta
 import com.example.practicaroom.db.models.RecetaIngrediente
 
 @Database(entities = [Receta::class, Ingrediente::class, RecetaIngrediente::class],
-    version = 2
+    version = 1
 )
 abstract class AppDataBase : RoomDatabase() {
     abstract fun recetaDao(): RecetaDao

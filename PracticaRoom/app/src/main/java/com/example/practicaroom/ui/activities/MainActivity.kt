@@ -58,8 +58,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPersonDetailClick(receta: Receta) {
-                val intent = Intent(this@MainActivity, DetalleListaRecetaActivity::class.java)
-                intent.putExtra(DetalleListaRecetaActivity.PARAM_RECETA, receta)
+                val intent = DetalleListaRecetaActivity.detailIntent(this@MainActivity, receta.id)
                 startActivity(intent)
             }
         }

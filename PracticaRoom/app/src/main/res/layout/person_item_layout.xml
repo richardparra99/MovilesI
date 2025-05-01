@@ -19,17 +19,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/lbl_Ingredientes"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="lunes y viernes"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblRectaTitulo" />
-
-    <TextView
         android:id="@+id/lblPreparacion"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -38,7 +27,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lbl_Ingredientes" />
+        app:layout_constraintTop_toBottomOf="@+id/lblRectaTitulo" />
 
     <ImageButton
         android:id="@+id/btnContactOpenDetail"
@@ -47,8 +36,8 @@
         android:backgroundTint="#CDDC39"
         android:tint="#FF5722"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/lbl_Ingredientes"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.526"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@android:drawable/ic_menu_send" />
 </androidx.constraintlayout.widget.ConstraintLayout>

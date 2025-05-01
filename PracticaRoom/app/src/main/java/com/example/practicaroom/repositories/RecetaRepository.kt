@@ -60,31 +60,29 @@ object RecetaRepository {
         }.map { it.receta }
     }
 
-    suspend fun guardarRecetaConIngredientes(context: Context, receta: Receta, nombresIngredientes: List<String>) {
+    suspend fun guardarRecetaConIngredientes(context: Context, receta: Receta, nombresIngredientes: List<String>): Receta {
         val db = AppDataBase.getInstance(context)
 
-        // Guardar receta y obtener ID generado
         val recetaId = db.recetaDao().insertarReceta(receta).toInt()
+        receta.id = recetaId // MUY IMPORTANTE
 
         for (nombreOriginal in nombresIngredientes) {
             val nombre = nombreOriginal.trim().lowercase()
 
-            // Verificamos si el ingrediente ya existe
             var ingrediente = db.recetaDao().obtenerIngredientePorNombre(nombre)
 
-            // Si no existe, lo insertamos
             if (ingrediente == null) {
-                val nuevoIngredienteId = db.recetaDao().insertarIngrediente(
-                    Ingrediente(nombre)
-                ).toInt()
-
+                val nuevoIngredienteId = db.recetaDao().insertarIngrediente(Ingrediente(nombre)).toInt()
                 ingrediente = Ingrediente(nombre).apply { id = nuevoIngredienteId }
             }
 
-            // Insertamos la relación receta <-> ingrediente
             db.recetaDao().insertarRecetaIngrediente(
                 RecetaIngrediente(recetaId, ingrediente.id)
             )
         }
+
+        return receta // ✅ retorna la receta con ID actualizado
     }
+
+
 }
