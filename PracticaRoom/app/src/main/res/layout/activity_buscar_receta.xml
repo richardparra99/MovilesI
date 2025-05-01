@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
+            android:backgroundTint="#FF9800"
             android:padding="10dp"
             android:text="Lechuga" />
 
@@ -34,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
+            android:backgroundTint="#FF9800"
             android:padding="10dp"
             android:text="Arroz" />
 
@@ -43,6 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
+            android:backgroundTint="#FF9800"
             android:padding="10dp"
             android:text="Huevo" />
 
@@ -52,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
+            android:backgroundTint="#FF9800"
             android:padding="10dp"
             android:text="Tomate" />
     </LinearLayout>
@@ -74,6 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
+            android:backgroundTint="#FF9800"
             android:padding="10dp"
             android:text="Pollo" />
 
@@ -83,6 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
+            android:backgroundTint="#FF9800"
             android:padding="10dp"
             android:text="Queso" />
 
@@ -92,6 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
+            android:backgroundTint="#FF9800"
             android:padding="10dp"
             android:text="Fideo largo" />
 
@@ -101,6 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
+            android:backgroundTint="#FF9800"
             android:padding="10dp"
             android:text="Ajo" />
     </LinearLayout>
@@ -112,7 +120,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="32dp"
-        android:backgroundTint="#4CAF50"
+        android:backgroundTint="#CDDC39"
         android:text="Buscar Receta"
         android:textColorLink="#4CAF50"
         app:layout_constraintEnd_toEndOf="parent"

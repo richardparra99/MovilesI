@@ -53,4 +53,8 @@ interface RecetaDao {
     suspend fun obtenerRecetasConIngredientes(): List<RecetaConIngrediente>
 
 
+    @Transaction
+    @Query("SELECT * FROM Receta WHERE id = :id")
+    suspend fun obtenerRecetaConIngredientesPorId(id: Int): RecetaConIngrediente?
+
 }

@@ -103,15 +103,15 @@ class RecetaDetalleActivity : AppCompatActivity() {
         val ingredientes = viewModel.ingredientesSeleccionados.value?.toList() ?: emptyList()
 
         lifecycleScope.launch {
-            RecetaRepository.guardarReceta(this@RecetaDetalleActivity, nuevaReceta)
-            finish()
-        }
-
-        lifecycleScope.launch {
-            RecetaRepository.guardarRecetaConIngredientes(this@RecetaDetalleActivity,
-                nuevaReceta,
-                ingredientes
+            val recetaGuardada = RecetaRepository.guardarRecetaConIngredientes(
+                context = this@RecetaDetalleActivity,
+                receta = nuevaReceta,
+                nombresIngredientes = ingredientes
             )
+
+            // Debug opcional
+            // Log.d("DEBUG", "Receta guardada con ID: ${recetaGuardada.id}")
+
             finish()
         }
     }

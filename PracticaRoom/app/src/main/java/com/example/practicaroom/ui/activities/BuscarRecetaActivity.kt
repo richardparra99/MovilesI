@@ -55,7 +55,6 @@ class BuscarRecetaActivity : AppCompatActivity() {
                     val intent = Intent(this, ListaRecetaFiltradasActivity::class.java)
                     intent.putExtra("recetas_encontradas", ArrayList(recetas)) // Recetas encontradas
                     startActivity(intent)
-                    finish()
                 }
             }
         }
