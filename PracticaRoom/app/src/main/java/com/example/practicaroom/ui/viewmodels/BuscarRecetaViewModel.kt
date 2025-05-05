@@ -4,26 +4,31 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.practicaroom.db.models.Receta
 import com.example.practicaroom.repositories.RecetaRepository
 import kotlinx.coroutines.launch
 
 class BuscarRecetaViewModel: ViewModel() {
-    private var _peopleList: MutableLiveData<ArrayList<Receta>> = MutableLiveData(arrayListOf())
+    private val _recetasFiltradas = MutableLiveData<List<Receta>>()
+    val recetasFiltradas: LiveData<List<Receta>> = _recetasFiltradas
+
+    fun buscarRecetas(context: Context, ingredientes: List<String>) {
+        viewModelScope.launch {
+            val recetas = RecetaRepository.buscarRecetasPorIngredientes(context, ingredientes)
+            _recetasFiltradas.postValue(recetas)
+        }
+    }
+    // Esto lo podés seguir usando si querés en MainActivity
+    /*private var _peopleList: MutableLiveData<ArrayList<Receta>> = MutableLiveData(arrayListOf())
     val peopleList: MutableLiveData<ArrayList<Receta>> = _peopleList
 
-    fun buscarRecetasConIngredientes(context: Context, ingredientes: List<String>): LiveData<List<Receta>> = liveData {
-        val recetas = RecetaRepository.buscarRecetasPorIngredientes(context, ingredientes)
-        emit(recetas)
-    }
-
-    fun loadPeople(context: Context){
+    fun loadPeople(context: Context) {
         viewModelScope.launch {
             peopleList.postValue(
                 RecetaRepository.obtenerListaReceta(context) as ArrayList<Receta>
             )
         }
-    }
+    }*/
+
 }

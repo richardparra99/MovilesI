@@ -4,7 +4,6 @@ import RecetaAdapter
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPersonDetailClick(receta: Receta) {
-                val intent = DetalleListaRecetaActivity.detailIntent(this@MainActivity, receta.id)
+                val intent = RecetaDetalleActivity.detailIntent(this@MainActivity, receta)
                 startActivity(intent)
             }
         }

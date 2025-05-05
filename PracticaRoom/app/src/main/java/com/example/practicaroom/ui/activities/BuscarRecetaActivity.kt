@@ -32,6 +32,7 @@ class BuscarRecetaActivity : AppCompatActivity() {
 
         setupBotonesIngredientes()
         setupBotonBuscar()
+        observarResultadoBusqueda()
     }
 
     private fun setupBotonBuscar() {
@@ -41,21 +42,24 @@ class BuscarRecetaActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            viewModel.buscarRecetasConIngredientes(this, ingredientesSeleccionados).observe(this) { recetas ->
-                if (recetas.isNullOrEmpty()) {
-                    Toast.makeText(this, "No se encontraron recetas. Puedes crear una nueva.", Toast.LENGTH_SHORT).show()
+            // Aquí ya usamos viewModelScope
+            viewModel.buscarRecetas(this, ingredientesSeleccionados)
+        }
+    }
 
-                    // 👉 Enviar los ingredientes seleccionados para prellenar el campo de ingredientes
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.putStringArrayListExtra("ingredientes_seleccionados", ArrayList(ingredientesSeleccionados))
-                    startActivity(intent)
+    private fun observarResultadoBusqueda() {
+        viewModel.recetasFiltradas.observe(this) { recetas ->
+            if (recetas.isNullOrEmpty()) {
+                Toast.makeText(this, "No se encontraron recetas. Puedes crear una nueva.", Toast.LENGTH_SHORT).show()
 
-                    finish() // Cerramos esta Activity después de mandar al formulario
-                } else {
-                    val intent = Intent(this, ListaRecetaFiltradasActivity::class.java)
-                    intent.putExtra("recetas_encontradas", ArrayList(recetas)) // Recetas encontradas
-                    startActivity(intent)
-                }
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putStringArrayListExtra("ingredientes_seleccionados", ArrayList(ingredientesSeleccionados))
+                startActivity(intent)
+                finish()
+            } else {
+                val intent = Intent(this, ListaRecetaFiltradasActivity::class.java)
+                intent.putExtra("recetas_encontradas", ArrayList(recetas))
+                startActivity(intent)
             }
         }
     }
@@ -78,15 +82,16 @@ class BuscarRecetaActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun toggleSeleccionIngrediente(boton: Button) {
         val ingrediente = boton.text.toString()
 
         if (ingredientesSeleccionados.contains(ingrediente)) {
             ingredientesSeleccionados.remove(ingrediente)
-            boton.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+            boton.setBackgroundColor(resources.getColor(android.R.color.darker_gray, theme))
         } else {
             ingredientesSeleccionados.add(ingrediente)
-            boton.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
+            boton.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light, theme))
         }
     }
 }

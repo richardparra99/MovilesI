@@ -57,4 +57,8 @@ interface RecetaDao {
     @Query("SELECT * FROM Receta WHERE id = :id")
     suspend fun obtenerRecetaConIngredientesPorId(id: Int): RecetaConIngrediente?
 
+    @Query("DELETE FROM RecetaIngrediente WHERE recetaId = :recetaId")
+    suspend fun eliminarIngredientesDeReceta(recetaId: Int)
+
+
 }

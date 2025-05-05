@@ -5,19 +5,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.CheckBox
 import android.widget.LinearLayout
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
-import com.example.practicaroom.R
 import com.example.practicaroom.databinding.ActivityRecetaDetalleBinding
 import com.example.practicaroom.db.models.Receta
 import com.example.practicaroom.repositories.RecetaRepository
 import com.example.practicaroom.ui.viewmodels.RecetaDetalleViewModel
 import kotlinx.coroutines.launch
+import com.example.practicaroom.R
 
 class RecetaDetalleActivity : AppCompatActivity() {
     private var receta: Receta? = null
@@ -29,23 +28,23 @@ class RecetaDetalleActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityRecetaDetalleBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        receta = intent.getSerializableExtra(PARAM_RECETA) as Receta?
-        val ingredientesIniciales = intent.getStringArrayListExtra("ingredientes_seleccionados")
-        ingredientesIniciales?.let {
-            viewModel.setIngredientesIniciales(it)
-        }
-        cargarRecetaDetalle(receta)
-        recuperIngredienteSelecionado()
-        setupEventListeners()
+
+        receta = intent.getSerializableExtra(PARAM_RECETA) as? Receta
+
+        viewModel.cargarIngredientes(this, receta, intent.getStringArrayListExtra("ingredientes_seleccionados"))
+        cargarRecetaDetalle()
         setupCheckBoxes()
+        setupEventListeners()
+
+        observarIngredientes()
     }
 
     private fun setupCheckBoxes() {
@@ -58,80 +57,80 @@ class RecetaDetalleActivity : AppCompatActivity() {
                 text = ingrediente
                 isChecked = viewModel.ingredientesSeleccionados.value?.contains(ingrediente) == true
 
-                setOnCheckedChangeListener { _, isChecked ->
+                setOnCheckedChangeListener { _, _ ->
                     viewModel.toggleIngrediente(ingrediente)
                 }
             }
             checkBoxes.add(checkBox)
             container.addView(checkBox)
         }
-
     }
 
-    private fun recuperIngredienteSelecionado() {
-        val ingredientesRecibidos = intent.getStringArrayListExtra("ingredientes_seleccionados")
-        ingredientesRecibidos?.let {
-            binding.txtIngredientes.editText?.setText(it.joinToString(","))
+    private fun observarIngredientes() {
+        viewModel.ingredientesSeleccionados.observe(this) { seleccionados ->
+            checkBoxes.forEach { cb ->
+                cb.isChecked = seleccionados.contains(cb.text.toString())
+            }
         }
     }
-
 
     private fun setupEventListeners() {
         binding.btnCancelar.setOnClickListener { finish() }
-        binding.btnGuardarReceta.setOnClickListener { guardarReceta() }
-        binding.btnEliminar.setOnClickListener { eliminarReceta() }
-    }
 
-    private fun eliminarReceta() {
-        lifecycleScope.launch {
-            receta?.let {
-                RecetaRepository.EliminarReceta(
-                    context = this@RecetaDetalleActivity,
-                    receta = it
-                )
+        binding.btnGuardarReceta.setOnClickListener {
+            val titulo = binding.txtTitle.editText?.text.toString().trim()
+            val preparacion = binding.txtPreparacion.editText?.text.toString().trim()
+            val ingredientesSeleccionados = viewModel.ingredientesSeleccionados.value ?: emptyList()
+
+            val isNueva = receta?.id == 0 || receta == null
+
+            if (titulo.isEmpty() || preparacion.isEmpty()) {
+                Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            finish()
+
+            if (ingredientesSeleccionados.isEmpty()) {
+                Toast.makeText(this, "Selecciona al menos un ingrediente", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val nuevaReceta = Receta(titulo, preparacion).apply {
+                id = receta?.id ?: 0
+            }
+
+            binding.btnGuardarReceta.isEnabled = false
+
+            lifecycleScope.launch {
+                RecetaRepository.guardarRecetaConIngredientes(this@RecetaDetalleActivity, nuevaReceta, ingredientesSeleccionados)
+                binding.btnGuardarReceta.isEnabled = true
+                finish()
+            }
+        }
+
+        binding.btnEliminar.setOnClickListener {
+            receta?.let {
+                lifecycleScope.launch {
+                    RecetaRepository.EliminarReceta(this@RecetaDetalleActivity, it)
+                    finish()
+                }
+            }
         }
     }
 
-    private fun guardarReceta() {
-        val nuevaReceta = Receta(
-            binding.txtTitle.editText?.text.toString(),
-            binding.txtPreparacion.editText?.text.toString()
-        )
-
-        val ingredientes = viewModel.ingredientesSeleccionados.value?.toList() ?: emptyList()
-
-        lifecycleScope.launch {
-            val recetaGuardada = RecetaRepository.guardarRecetaConIngredientes(
-                context = this@RecetaDetalleActivity,
-                receta = nuevaReceta,
-                nombresIngredientes = ingredientes
-            )
-
-            // Debug opcional
-            // Log.d("DEBUG", "Receta guardada con ID: ${recetaGuardada.id}")
-
-            finish()
+    private fun cargarRecetaDetalle() {
+        receta?.let {
+            binding.txtTitle.editText?.setText(it.titulo)
+            binding.txtPreparacion.editText?.setText(it.preparacion)
         }
     }
 
-    private fun cargarRecetaDetalle(receta: Receta?) {
-        if (receta == null || receta.id == 0) {
-            binding.btnEliminar.isEnabled = false
-            binding.btnEliminar.isClickable = false
-            return
-        }
-        binding.txtTitle.editText?.setText(receta.titulo)
-        binding.txtPreparacion.editText?.setText(receta.preparacion)
-    }
 
     companion object {
         const val PARAM_RECETA = "receta"
-        fun detailIntent(context: Context, receta: Receta): Intent? {
-            val intent = Intent(context, RecetaDetalleActivity::class.java)
-            intent.putExtra(PARAM_RECETA, receta)
-            return intent
+        fun detailIntent(context: Context, receta: Receta): Intent {
+            return Intent(context, RecetaDetalleActivity::class.java).apply {
+                putExtra(PARAM_RECETA, receta)
+            }
         }
     }
 }

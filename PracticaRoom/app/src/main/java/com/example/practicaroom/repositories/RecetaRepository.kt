@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.practicaroom.db.AppDataBase
 import com.example.practicaroom.db.models.Ingrediente
 import com.example.practicaroom.db.models.Receta
+import com.example.practicaroom.db.models.RecetaConIngrediente
 import com.example.practicaroom.db.models.RecetaIngrediente
 
 object RecetaRepository {
@@ -60,29 +61,41 @@ object RecetaRepository {
         }.map { it.receta }
     }
 
-    suspend fun guardarRecetaConIngredientes(context: Context, receta: Receta, nombresIngredientes: List<String>): Receta {
+    suspend fun guardarRecetaConIngredientes(
+        context: Context,
+        receta: Receta,
+        nombresIngredientes: List<String>
+    ): Receta {
         val db = AppDataBase.getInstance(context)
+        val dao = db.recetaDao()
 
-        val recetaId = db.recetaDao().insertarReceta(receta).toInt()
-        receta.id = recetaId // MUY IMPORTANTE
-
-        for (nombreOriginal in nombresIngredientes) {
-            val nombre = nombreOriginal.trim().lowercase()
-
-            var ingrediente = db.recetaDao().obtenerIngredientePorNombre(nombre)
-
-            if (ingrediente == null) {
-                val nuevoIngredienteId = db.recetaDao().insertarIngrediente(Ingrediente(nombre)).toInt()
-                ingrediente = Ingrediente(nombre).apply { id = nuevoIngredienteId }
-            }
-
-            db.recetaDao().insertarRecetaIngrediente(
-                RecetaIngrediente(recetaId, ingrediente.id)
-            )
+        if (receta.id != 0) {
+            dao.actualizarReceta(receta)
+            dao.eliminarIngredientesDeReceta(receta.id)
+        } else {
+            val nuevoId = dao.insertarReceta(receta).toInt()
+            receta.id = nuevoId
         }
 
-        return receta // ✅ retorna la receta con ID actualizado
+        for (nombre in nombresIngredientes) {
+            val nombreLimpio = nombre.trim().lowercase()
+            var ingrediente = dao.obtenerIngredientePorNombre(nombreLimpio)
+
+            if (ingrediente == null) {
+                val idNuevo = dao.insertarIngrediente(Ingrediente(nombreLimpio)).toInt()
+                ingrediente = Ingrediente(nombreLimpio).apply { id = idNuevo }
+            }
+
+            dao.insertarRecetaIngrediente(RecetaIngrediente(receta.id, ingrediente.id))
+        }
+
+        return receta
     }
 
+    suspend fun getRecetaConIngredientes(context: Context, recetaId: Int): RecetaConIngrediente? {
+        return AppDataBase.getInstance(context)
+            .recetaDao()
+            .obtenerRecetaConIngredientesPorId(recetaId)
+    }
 
 }
