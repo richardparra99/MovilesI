@@ -12,12 +12,10 @@ class MainViewModel : ViewModel(){
     private var _peopleList: MutableLiveData<ArrayList<Receta>> = MutableLiveData(arrayListOf())
     val peopleList: MutableLiveData<ArrayList<Receta>> = _peopleList
 
-    fun loadPeople(context: Context){
+    fun loadPeople(context: Context) {
         viewModelScope.launch {
-            peopleList.postValue(
-                RecetaRepository.obtenerListaReceta(context) as ArrayList<Receta>
-            )
+            val lista = RecetaRepository.obtenerListaReceta(context)
+            _peopleList.postValue(ArrayList(lista))
         }
     }
-
 }
