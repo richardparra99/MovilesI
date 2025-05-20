@@ -25,10 +25,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupEventListerns() {
-        binding.btnUp.setOnClickListener {  }
-        binding.btnDown.setOnClickListener {  }
-        binding.btnLeft.setOnClickListener {  }
-        binding.btnRight.setOnClickListener {  }
-        binding.tetrisBoardView.testFillBoard()
+        binding.btnDown.setOnClickListener {
+            binding.tetrisBoardView.dropToBottom()
+        }
+        binding.btnRotate.setOnClickListener {
+            binding.tetrisBoardView.rotateCurrentPiece()
+        }
     }
+
 }
