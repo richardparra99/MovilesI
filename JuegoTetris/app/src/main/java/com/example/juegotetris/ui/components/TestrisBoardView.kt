@@ -10,31 +10,52 @@ import android.view.View
 import com.example.juegotetris.models.Cell
 import com.example.juegotetris.models.TetrisBoard
 import android.os.Handler
+import com.example.juegotetris.Observer.Observer
 
 
-class TestrisBoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+class TestrisBoardView(context: Context?, attrs: AttributeSet?) : View(context, attrs), Observer {
     private val board = TetrisBoard()
     private val paint = Paint()
     private val handler = Handler()
-    private val gravitySpeed = 500L // cada 0.5 segundos
+    //private val gravitySpeed = 500L // cada 0.5 segundos
+
+    fun updateScoreCallback(callback: (Int, Int) -> Unit) {
+        scoreUpdateCallback = callback
+    }
+
+    private var scoreUpdateCallback: ((Int, Int) -> Unit)? = null
+
+    private var gameOverCallback: (() -> Unit)? = null
 
     private val gravityRunnable = object : Runnable {
         override fun run() {
             val moved = board.movePieceDown()
-            if (moved) {
-                invalidate()
-            } else {
-                // PIEZA YA NO PUEDE BAJAR
-                board.fixActivePieceToBoard()  // Te la doy en el paso siguiente si querés
-                board.spawnPiece()
+            if (!moved) {
+                board.fixActivePieceToBoard()
+                val success = board.spawnPiece()
+
+                if (!success) {
+                    stopGame()
+                    gameOverCallback?.invoke()
+                    return
+                }
+
+                scoreUpdateCallback?.invoke(
+                    board.scoreManager.score,
+                    board.scoreManager.level
+                )
             }
-            handler.postDelayed(this, gravitySpeed) // 🔁 repetir siempre
+
+            handler.postDelayed(this, board.scoreManager.getGravityDelay())
         }
     }
 
+
+
     init {
+        board.addObserver(this)
         board.spawnPiece()
-        handler.postDelayed(gravityRunnable, gravitySpeed)
+        handler.postDelayed(gravityRunnable, board.scoreManager.getGravityDelay())
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -43,14 +64,12 @@ class TestrisBoardView(context: Context?, attrs: AttributeSet?) : View(context, 
         val cellWidth = width / board.cols
         val cellHeight = height / board.rows
 
-        // 1. Pintar tablero base
         for (y in 0 until board.rows) {
             for (x in 0 until board.cols) {
                 drawCell(canvas, x, y, board.getCell(x, y), cellWidth, cellHeight)
             }
         }
 
-        // 2. Pintar pieza activa
         val pieceCells = board.drawActivePiece()
         for ((x, y) in pieceCells) {
             drawCell(canvas, x, y, board.activePiece?.cellType ?: Cell.FILLED_RED, cellWidth, cellHeight)
@@ -94,40 +113,44 @@ class TestrisBoardView(context: Context?, attrs: AttributeSet?) : View(context, 
 
     private fun movePieceLeft() {
         board.activePiece?.moveLeft(board)
-        invalidate()
     }
 
     private fun movePieceRight() {
         board.activePiece?.moveRight(board)
-        invalidate()
     }
-
-//    private val gravityRunnable = object : Runnable {
-//        override fun run() {
-//            val moved = board.movePieceDown()
-//            if (moved) {
-//                invalidate()
-//                handler.postDelayed(this, gravitySpeed)
-//            } else {
-//                // Pieza no pudo moverse → se quedó fija (futuro)
-//                Log.d("Tetris", "Pieza llegó al fondo (futuro: fijar pieza y nueva)")
-//            }
-//        }
-//    }
 
     fun dropToBottom() {
         while (board.movePieceDown()) {
-            // Sigue bajando hasta que ya no pueda
         }
         board.fixActivePieceToBoard()
         board.spawnPiece()
-        invalidate()
     }
+
+    fun stopGame() {
+        handler.removeCallbacks(gravityRunnable)
+    }
+
+    fun onGameOver(callback: () -> Unit) {
+        gameOverCallback = callback
+    }
+
+    fun resetGame() {
+        board.reset()
+        handler.postDelayed(gravityRunnable, board.scoreManager.getGravityDelay())
+        scoreUpdateCallback?.invoke(0, 1)
+    }
+
+    fun getFinalScore(): Int {
+        return board.scoreManager.score
+    }
+
 
     fun rotateCurrentPiece() {
         board.rotateActivePiece()
-        invalidate()
     }
 
+    override fun update() {
+        invalidate()
+    }
 
 }
