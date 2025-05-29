@@ -43,4 +43,37 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="#CDDC39"
+        android:gravity="center"
+        android:text="Puntos: 0"
+        android:textColor="#000"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnDown"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/btnRotate"
+        app:layout_constraintTop_toBottomOf="@+id/tetrisBoardView" />
+
+    <!-- TEXTO NIVEL CENTRADO DEBAJO DEL PUNTAJE -->
+    <TextView
+        android:id="@+id/levelText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FF9800"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:text="Nivel: 1"
+        android:textColor="#000"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@id/btnDown"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/btnRotate"
+        app:layout_constraintTop_toBottomOf="@+id/scoreText" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

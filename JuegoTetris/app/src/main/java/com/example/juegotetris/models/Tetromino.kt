@@ -52,12 +52,12 @@ data class Tetromino(
     companion object {
         fun random(): Tetromino {
             val pieces = listOf(
-                // Cuadrado O
+                // Cuadrado
                 arrayOf(
                     intArrayOf(1, 1),
                     intArrayOf(1, 1)
                 ),
-                // Línea I
+                // |
                 arrayOf(
                     intArrayOf(1),
                     intArrayOf(1),
@@ -116,7 +116,6 @@ data class Tetromino(
     fun rotate(board: TetrisBoard): Boolean {
         val newShape = rotateMatrix(shape)
 
-        // Verificar si la nueva forma cabe en la posición actual
         for (row in newShape.indices) {
             for (col in newShape[row].indices) {
                 if (newShape[row][col] != 0) {
@@ -124,16 +123,15 @@ data class Tetromino(
                     val newY = y + row
 
                     if (newX !in 0 until board.cols || newY >= board.rows) {
-                        return false // fuera de bordes
+                        return false
                     }
 
                     if (newY >= 0 && board.getCell(newX, newY) != Cell.EMPTY) {
-                        return false // colisión
+                        return false
                     }
                 }
             }
         }
-        // Si no hay problema, aplicar rotación
         shape = newShape
         return true
     }
