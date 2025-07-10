@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/HomeFragment">
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.example.projetcmovil.ui.HomeFragment"
+        android:label="fragment_first"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_HomeFragment_to_LoginFragment"
+            app:destination="@id/LoginFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_registrarFragment"
+            app:destination="@id/registrarFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="com.example.projetcmovil.ui.LoginFragment"
+        android:label="fragment_second"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_LoginFragment_to_categoriaFragment"
+            app:destination="@id/categoriaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrarFragment"
+        android:name="com.example.projetcmovil.ui.RegistrarFragment"
+        android:label="fragment_registrar"
+        tools:layout="@layout/fragment_registrar" >
+        <action
+            android:id="@+id/action_registrarFragment_to_LoginFragment"
+            app:destination="@id/LoginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoriaFragment"
+        android:name="com.example.projetcmovil.ui.CategoriaFragment"
+        android:label="fragment_categoria"
+        tools:layout="@layout/fragment_categoria" >
+        <action
+            android:id="@+id/action_categoriaFragment_to_trabajadoresFragment"
+            app:destination="@id/trabajadoresFragment">
+            <argument
+                android:name="categoriaId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/trabajadoresFragment"
+        android:name="com.example.projetcmovil.ui.TrabajadoresFragment"
+        android:label="TrabajadoresFragment" >
+        <argument
+            android:name="categoriaId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_trabajadoresFragment_to_detalleTrabajadorFragment"
+            app:destination="@id/detalleTrabajadorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detalleTrabajadorFragment"
+        android:name="com.example.projetcmovil.ui.DetalleTrabajadorFragment"
+        android:label="DetalleTrabajadorFragment" >
+        <argument
+            android:name="trabajadorId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_detalleTrabajadorFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.projetcmovil.ui.ChatFragment"
+        android:label="ChatFragment" >
+        <argument
+            android:name="trabajadorId"
+            app:argType="integer" />
+        <argument
+            android:name="nombreTrabajador"
+            app:argType="string" />
+        <argument
+            android:name="imagenUrl"
+            app:argType="string" />
+    </fragment>
+</navigation>
