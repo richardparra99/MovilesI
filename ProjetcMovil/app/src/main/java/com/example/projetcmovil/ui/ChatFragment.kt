@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,7 @@ class ChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentChatBinding.inflate(inflater, container, false)
         setupRecyclerView()
         observarViewModel()
@@ -33,6 +34,16 @@ class ChatFragment : Fragment() {
             if (mensaje.isNotEmpty()) {
                 viewModel.enviarMensaje(mensaje)
                 binding.etMensaje.text.clear()
+            }
+        }
+
+        binding.btnReservar.setOnClickListener {
+            viewModel.reservarCita(args.trabajadorId) { exito ->
+                if (exito) {
+                    Toast.makeText(requireContext(), "¡Reserva exitosa!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Error al reservar", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

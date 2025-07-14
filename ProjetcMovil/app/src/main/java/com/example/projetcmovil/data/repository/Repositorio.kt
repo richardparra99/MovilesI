@@ -1,6 +1,7 @@
 package com.example.projetcmovil.data.repository
 
 import android.content.Context
+import com.example.projetcmovil.data.model.CitaRequest
 import com.example.projetcmovil.data.network.InstanciaRetrofit
 import com.example.projetcmovil.util.GestorToken
 
@@ -22,9 +23,10 @@ class Repositorio(private val context: Context) {
 
     suspend fun obtenerDetalleTrabajador(idTrabajador: Int) =
         api.obtenerDetalleTrabajador(idTrabajador)
-//
-//    suspend fun crearCita(idTrabajador: Int) =
-//        api.crearCita(mapOf("worker_id" to idTrabajador))
+
+    suspend fun crearCita(idTrabajador: Int) =
+        api.crearCita(CitaRequest(idTrabajador))
+
 //
 //    suspend fun obtenerCitas() = api.obtenerCitas()
 //

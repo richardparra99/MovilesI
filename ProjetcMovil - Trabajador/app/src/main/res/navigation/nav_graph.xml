@@ -20,10 +20,40 @@
         android:id="@+id/loginTrabajoFragment"
         android:name="com.example.projetcmovil.ui.LoginTrabajoFragment"
         android:label="fragment_login_trabajo"
-        tools:layout="@layout/fragment_login_trabajo" />
+        tools:layout="@layout/fragment_login_trabajo" >
+        <action
+            android:id="@+id/action_loginTrabajoFragment_to_misCitasFragment"
+            app:destination="@id/misCitasFragment" />
+    </fragment>
     <fragment
         android:id="@+id/registroTrabajoFragment"
         android:name="com.example.projetcmovil.ui.RegistroTrabajoFragment"
         android:label="fragment_registro_trabajo"
-        tools:layout="@layout/fragment_registro_trabajo" />
+        tools:layout="@layout/fragment_registro_trabajo" >
+        <action
+            android:id="@+id/action_registroTrabajoFragment_to_ocupacionFragment"
+            app:destination="@id/ocupacionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ocupacionFragment"
+        android:name="com.example.projetcmovil.ui.OcupacionFragment"
+        android:label="OcupacionFragment" >
+        <action
+            android:id="@+id/action_ocupacionFragment_to_fotoPerfilFragment"
+            app:destination="@id/fotoPerfilFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fotoPerfilFragment"
+        android:name="com.example.projetcmovil.ui.FotoPerfilFragment"
+        android:label="FotoPerfilFragment" >
+        <action
+            android:id="@+id/action_fotoPerfilFragment_to_loginTrabajoFragment"
+            app:destination="@id/loginTrabajoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/misCitasFragment"
+        android:name="com.example.projetcmovil.ui.MisCitasFragment"
+        android:label="MisCitasFragment" />
+
 </navigation>

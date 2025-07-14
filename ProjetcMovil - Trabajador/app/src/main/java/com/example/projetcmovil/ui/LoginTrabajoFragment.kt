@@ -1,60 +1,57 @@
 package com.example.projetcmovil.ui
 
 import android.os.Bundle
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.projetcmovil.R
+import com.example.projetcmovil.databinding.FragmentLoginTrabajoBinding
+import com.example.projetcmovil.viewModel.LoginTrabajoViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginTrabajoFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LoginTrabajoFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding: FragmentLoginTrabajoBinding
+    private val viewModel: LoginTrabajoViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login_trabajo, container, false)
+    ): View {
+        binding = FragmentLoginTrabajoBinding.inflate(inflater, container, false)
+        setupListeners()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment LoginTrabajoFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            LoginTrabajoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun setupListeners() {
+        binding.btnAcceder.setOnClickListener {
+            val correo = binding.textInputCorreo.editText?.text.toString().trim()
+            val contrasena = binding.textInputContrasena.editText?.text.toString().trim()
+
+            if (correo.isEmpty() || contrasena.isEmpty()) {
+                Toast.makeText(requireContext(), "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+                Toast.makeText(requireContext(), "Correo inválido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            viewModel.login(
+                correo,
+                contrasena,
+                onSuccess = { token ->
+                    Toast.makeText(requireContext(), "Bienvenido!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_loginTrabajoFragment_to_misCitasFragment)
+                },
+                onError = { mensaje ->
+                    Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show()
+                }
+            )
+        }
     }
 }

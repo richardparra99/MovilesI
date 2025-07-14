@@ -33,7 +33,6 @@ class CategoriaFragment : Fragment() {
 
     private fun setupRecyclerView() {
         categoriaAdapter = CategoriaAdapter { categoria ->
-            // Navegar al fragment de trabajadores pasando el id
             val action = CategoriaFragmentDirections
                 .actionCategoriaFragmentToTrabajadoresFragment(categoria.id)
             findNavController().navigate(action)
