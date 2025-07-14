@@ -24,7 +24,6 @@
             android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -48,16 +47,20 @@
 
         <ImageButton
             android:id="@+id/btnReservar"
-            android:layout_width="58dp"
-            android:layout_height="45dp" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:background="@android:drawable/dialog_holo_light_frame"
+            android:src="@android:drawable/ic_menu_manage"
+            android:contentDescription="Reservar servicio" />
 
         <ImageButton
             android:id="@+id/btnEnviar"
-            android:layout_width="58dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="8dp"
-            android:background="#4CAF50"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
             android:backgroundTint="#4CAF50"
-            android:src="@android:drawable/ic_menu_send" />
+            android:src="@android:drawable/ic_menu_send"
+            android:contentDescription="Enviar mensaje"/>
     </LinearLayout>
 </LinearLayout>

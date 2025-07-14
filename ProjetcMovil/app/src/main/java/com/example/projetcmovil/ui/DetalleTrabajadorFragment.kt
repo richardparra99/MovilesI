@@ -40,7 +40,7 @@ class DetalleTrabajadorFragment : Fragment() {
             binding.tvNombre.text = nombreCompleto
             binding.tvRating.text = "${trabajador.average_rating}% calificación"
             binding.tvTrabajos.text = "${trabajador.reviews_count} trabajos completados"
-            binding.tvOficios.text = "Plomero, electricista, pintor" // o lo que tengas
+            binding.tvOficios.text = "Plomero, electricista, pintor"
             Glide.with(this)
                 .load(imagenUrl)
                 .into(binding.imgPerfil)

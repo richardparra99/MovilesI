@@ -44,13 +44,13 @@ class RegistroTrabajoFragment : Fragment() {
             }
 
             viewModel.registrarTrabajador(
-                nombre,
-                apellido,
-                correo,
-                contrasena,
-                onSuccess = {
-                    Toast.makeText(requireContext(), "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_homeFragment_to_loginTrabajoFragment)
+                nombre, apellido, correo, contrasena,
+                onSuccess = { userId ->   // ✅ ahora es userId
+                    Toast.makeText(requireContext(), "Registro exitoso. Usuario ID: $userId", Toast.LENGTH_SHORT).show()
+                    val bundle = Bundle().apply {
+                        putInt("trabajadorId", userId) // el nombre de clave igual, para no romper navigation
+                    }
+                    findNavController().navigate(R.id.action_registroTrabajoFragment_to_ocupacionFragment, bundle)
                 },
                 onError = { errorMsg ->
                     Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show()

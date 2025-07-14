@@ -3,6 +3,7 @@ package com.example.projetcmovil.data.network
 import android.content.Context
 import com.example.projetcmovil.util.GestorToken
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -11,10 +12,14 @@ object InstanciaRetrofit {
     private var retrofit: Retrofit? = null
 
     fun obtenerInstancia(context: Context): ApiServicio {
+        val logging = HttpLoggingInterceptor()
+        logging.level = HttpLoggingInterceptor.Level.BODY
+
         val cliente = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(logging) // 👈 añade esto
             .addInterceptor { cadena ->
                 val solicitud = cadena.request().newBuilder()
                 val token = GestorToken(context).obtenerToken()

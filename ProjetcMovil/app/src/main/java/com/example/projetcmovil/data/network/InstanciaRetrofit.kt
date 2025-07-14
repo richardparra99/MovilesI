@@ -12,9 +12,9 @@ object InstanciaRetrofit {
 
     fun obtenerInstancia(context: Context): ApiServicio {
         val cliente = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS) // 👈
-            .readTimeout(30, TimeUnit.SECONDS)    // 👈
-            .writeTimeout(30, TimeUnit.SECONDS)   // 👈
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .addInterceptor { cadena ->
                 val solicitud = cadena.request().newBuilder()
                 val token = GestorToken(context).obtenerToken()

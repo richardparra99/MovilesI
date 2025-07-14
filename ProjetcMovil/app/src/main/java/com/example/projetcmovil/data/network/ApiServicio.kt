@@ -2,6 +2,7 @@ package com.example.projetcmovil.data.network
 
 import com.example.projetcmovil.data.model.Categoria
 import com.example.projetcmovil.data.model.Cita
+import com.example.projetcmovil.data.model.CitaRequest
 import com.example.projetcmovil.data.model.MensajeChat
 import com.example.projetcmovil.data.model.Trabajador
 import retrofit2.Response
@@ -30,9 +31,9 @@ interface ApiServicio {
     @GET("workers/{id}")
     suspend fun obtenerDetalleTrabajador(@Path("id") id: Int): Response<Trabajador>
 
-//    // Citas
-//    @POST("/appointments")
-//    suspend fun crearCita(@Body datos: Map<String, Any>): Response<Cita>
+    @POST("appointments")
+    suspend fun crearCita(@Body body: CitaRequest): Response<Unit>
+
 //
 //    @GET("/appointments")
 //    suspend fun obtenerCitas(): Response<List<Cita>>
